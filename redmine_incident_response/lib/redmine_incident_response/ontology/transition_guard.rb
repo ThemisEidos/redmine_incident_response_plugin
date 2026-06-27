@@ -5,6 +5,7 @@ module RedmineIncidentResponse
         :allowed,
         :suggested_lifecycle_state,
         :messages,
+        :notices,
         :normalized_detection_type,
         :normalized_lifecycle_state,
         keyword_init: true
@@ -15,37 +16,39 @@ module RedmineIncidentResponse
       def evaluate(issue)
         classification = Classifier.classify(issue)
         messages = []
+        notices = []
         suggested_lifecycle_state = classification.lifecycle_state
 
         if direct_validation_blocked?(classification)
-          messages << 'Ontology guard: NAR or OBSERVABLE cannot be promoted directly to VALIDATED IOC.'
+          messages << 'NAR or OBSERVABLE cannot be promoted directly to VALIDATED IOC.'
           suggested_lifecycle_state = RedmineIncidentResponse::Vernacular::IOC
         end
 
         if classification.lifecycle_state == RedmineIncidentResponse::Vernacular::VALIDATED_IOC
           if classification.validation_disposition.nil? || classification.validation_disposition.to_s.strip.empty?
-            messages << 'Ontology guard: VALIDATED IOC requires a Validation Disposition.'
+            messages << 'VALIDATED IOC requires a Validation Disposition.'
           end
 
           if classification.validation_rationale.nil? || classification.validation_rationale.to_s.strip.empty?
             unless normalization_match?(classification.validation_disposition, 'UNDER INVESTIGATION')
-              messages << 'Ontology guard: VALIDATED IOC requires a Validation Rationale unless disposition is UNDER INVESTIGATION.'
+              messages << 'VALIDATED IOC requires a Validation Rationale unless disposition is UNDER INVESTIGATION.'
             end
           end
 
           if classifier_requires_validation_identity?(classification)
-            messages << 'Ontology guard: VALIDATED IOC requires a Reviewer / Validator.'
+            messages << 'VALIDATED IOC requires a Reviewer / Validator.'
           end
         end
 
         if normalization_match?(classification.validation_disposition, 'FALSE POSITIVE')
-          messages << 'Ontology guard: FALSE POSITIVE marks the issue as not eligible for escalation.'
+          notices << 'FALSE POSITIVE: this issue is not eligible for escalation.'
         end
 
         Result.new(
           allowed: messages.empty?,
           suggested_lifecycle_state: suggested_lifecycle_state,
           messages: messages,
+          notices: notices,
           normalized_detection_type: classification.detection_type,
           normalized_lifecycle_state: classification.lifecycle_state
         )

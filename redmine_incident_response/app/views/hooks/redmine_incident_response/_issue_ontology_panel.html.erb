@@ -49,11 +49,22 @@
   </div>
 
   <% if guard.messages.any? %>
-    <div class="ir-ontology-panel__section">
-      <strong>Ontology Guard</strong>
+    <div class="ir-ontology-panel__section ir-ontology-panel__guard--error">
+      <strong>Transition Blocked</strong>
       <ul>
         <% guard.messages.each do |message| %>
           <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% if guard.notices.any? %>
+    <div class="ir-ontology-panel__section ir-ontology-panel__guard--notice">
+      <strong>Notices</strong>
+      <ul>
+        <% guard.notices.each do |notice| %>
+          <li><%= notice %></li>
         <% end %>
       </ul>
     </div>

@@ -11,6 +11,7 @@ require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_respo
 require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/ontology/issue_presenter')
 require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/context')
 require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/issue_helper')
+require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/issue_patch')
 require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/hooks')
 
 Redmine::Plugin.register :redmine_incident_response do
@@ -25,4 +26,10 @@ Redmine::Plugin.register :redmine_incident_response do
        :incident_response,
        { controller: 'incident_response', action: 'index' },
        caption: 'Incident Response'
+end
+
+Rails.application.config.to_prepare do
+  unless Issue.included_modules.include?(RedmineIncidentResponse::IssuePatch)
+    Issue.send(:include, RedmineIncidentResponse::IssuePatch)
+  end
 end

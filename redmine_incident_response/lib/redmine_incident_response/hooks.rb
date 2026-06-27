@@ -17,27 +17,19 @@ module RedmineIncidentResponse
     end
 
     def controller_issues_new_after_save(context = {})
-      handle_ontology_save_hook(context, :new)
+      log_ontology_save(context[:issue], :new)
     end
 
     def controller_issues_edit_after_save(context = {})
-      handle_ontology_save_hook(context, :edit)
+      log_ontology_save(context[:issue], :edit)
     end
 
     private
 
-    def handle_ontology_save_hook(context, action)
-      issue = context[:issue]
-      return unless issue
+    def log_ontology_save(issue, action)
+      return unless issue && defined?(Redmine) && Redmine.respond_to?(:logger)
 
-      guard = Ontology::TransitionGuard.evaluate(issue)
-      return if guard.allowed
-
-      Redmine.logger.debug("Ontology guard triggered on #{action} save for Issue ID: #{issue.id}") if defined?(Redmine) && Redmine.respond_to?(:logger)
-
-      if context[:controller]&.respond_to?(:flash) && guard.messages.any?
-        context[:controller].flash[:warning] = guard.messages.join(' ')
-      end
+      Redmine.logger.debug("IR Hook: issue #{issue.id} #{action} save completed (ontology: #{issue.tracker&.name})")
     end
   end
 end
