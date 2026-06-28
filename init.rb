@@ -1,19 +1,19 @@
-require_dependency 'redmine_incident_response'
-require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/ontology')
-require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/vernacular')
-require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/models/ir_context')
-require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/models/loe_context')
-require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/models/ioc')
-require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/models/ir_status_map')
-require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/models/validation_chain')
-require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/ontology/classifier')
-require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/ontology/transition_guard')
-require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/ontology/issue_presenter')
-require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/context')
-require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/issue_helper')
-require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/issue_patch')
-require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/quick_action_service')
-require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/hooks')
+require_relative 'lib/redmine_incident_response'
+require_relative 'lib/redmine_incident_response/ontology'
+require_relative 'lib/redmine_incident_response/vernacular'
+require_relative 'lib/redmine_incident_response/models/ir_context'
+require_relative 'lib/redmine_incident_response/models/loe_context'
+require_relative 'lib/redmine_incident_response/models/ioc'
+require_relative 'lib/redmine_incident_response/models/ir_status_map'
+require_relative 'lib/redmine_incident_response/models/validation_chain'
+require_relative 'lib/redmine_incident_response/ontology/classifier'
+require_relative 'lib/redmine_incident_response/ontology/transition_guard'
+require_relative 'lib/redmine_incident_response/ontology/issue_presenter'
+require_relative 'lib/redmine_incident_response/context'
+require_relative 'lib/redmine_incident_response/issue_helper'
+require_relative 'lib/redmine_incident_response/issue_patch'
+require_relative 'lib/redmine_incident_response/quick_action_service'
+require_relative 'lib/redmine_incident_response/hooks'
 
 Redmine::Plugin.register :redmine_incident_response do
   name 'Redmine Incident Response'
