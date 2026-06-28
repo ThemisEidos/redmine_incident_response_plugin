@@ -1,1 +1,86 @@
-<h1>Incident Response</h1>
+<h2>Incident Response Dashboard</h2>
+
+<div class="splitcontentleft">
+
+  <%# ── IOC counter ─────────────────────────────────────────── %>
+  <div class="box">
+    <h3>Open IOCs</h3>
+    <p style="font-size: 2em; font-weight: bold; margin: 8px 0;">
+      <%= @open_ioc_count %>
+    </p>
+    <p><%= link_to 'View all IOCs', issues_path(tracker_id: Tracker.find_by(name: 'IOC')&.id) %></p>
+  </div>
+
+  <%# ── Recent Command Updates ──────────────────────────────── %>
+  <div class="box">
+    <h3>Recent Command Updates</h3>
+    <% if @recent_command_updates.any? %>
+      <table class="list issues" style="width:100%">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Subject</th>
+            <th>Status</th>
+            <th>Project</th>
+            <th>Updated</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @recent_command_updates.each do |issue| %>
+            <tr>
+              <td><%= link_to "##{issue.id}", issue_path(issue) %></td>
+              <td><%= link_to issue.subject, issue_path(issue) %></td>
+              <td><%= issue.status&.name %></td>
+              <td><%= issue.project&.name %></td>
+              <td><%= format_time(issue.updated_on) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p class="nodata">No Command Updates found.</p>
+    <% end %>
+  </div>
+
+</div><%# end splitcontentleft %>
+
+<div class="splitcontentright">
+
+  <%# ── Active Incidents ────────────────────────────────────── %>
+  <div class="box">
+    <h3>Active Incidents (<%= @active_incidents.size %>)</h3>
+    <% if @active_incidents.any? %>
+      <table class="list issues" style="width:100%">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Subject</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Assigned To</th>
+            <th>Project</th>
+            <th>Updated</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @active_incidents.each do |issue| %>
+            <tr class="<%= cycle('odd', 'even') %>">
+              <td><%= link_to "##{issue.id}", issue_path(issue) %></td>
+              <td><%= link_to issue.subject, issue_path(issue) %></td>
+              <td><%= issue.status&.name %></td>
+              <td><span class="priority-<%= issue.priority&.name&.downcase %>"><%= issue.priority&.name %></span></td>
+              <td><%= issue.assigned_to&.name || '—' %></td>
+              <td><%= issue.project&.name %></td>
+              <td><%= format_time(issue.updated_on) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p class="nodata">No active incidents.</p>
+    <% end %>
+  </div>
+
+</div><%# end splitcontentright %>
+
+<div class="clear"></div>

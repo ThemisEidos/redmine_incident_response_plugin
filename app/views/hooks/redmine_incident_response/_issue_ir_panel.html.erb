@@ -1,0 +1,48 @@
+<%
+  ir_status = RedmineIncidentResponse::Models::IrStatusMap.lifecycle_for(issue.status&.name).presence ||
+              issue.status&.name ||
+              '—'
+
+  severity, sev_class = case issue.priority&.name
+    when 'Low'                 then ['LOW',      'low']
+    when 'Normal'              then ['MEDIUM',   'normal']
+    when 'High'                then ['HIGH',     'high']
+    when 'Urgent'              then ['CRITICAL', 'urgent']
+    when 'Immediate'           then ['CRITICAL', 'immediate']
+    else                            ['—',        nil]
+    end
+
+  analyst_lane = case issue.category&.name.to_s
+    when /host/i     then 'Host'
+    when /network/i  then 'Network'
+    when /intel/i    then 'CTI'
+    when /forensic/i then 'Forensics'
+    else                  '—'
+    end
+%>
+
+<div class="box">
+  <h3><%= l(:label_incident_response, default: 'Incident Response') %></h3>
+  <table class="list" style="width:100%">
+    <tbody>
+      <tr>
+        <th style="width:20%"><%= l(:field_ir_status, default: 'IR Status') %></th>
+        <td style="width:30%"><%= ir_status %></td>
+        <th style="width:20%"><%= l(:field_severity, default: 'Severity') %></th>
+        <td>
+          <% if sev_class %>
+            <span class="priority priority-<%= sev_class %>" style="font-weight:bold;"><%= severity %></span>
+          <% else %>
+            <span>—</span>
+          <% end %>
+        </td>
+      </tr>
+      <tr>
+        <th><%= l(:field_analyst_lane, default: 'Analyst Lane') %></th>
+        <td><%= analyst_lane %></td>
+        <th><%= l(:field_assigned_to, default: 'Assigned Analyst') %></th>
+        <td><%= issue.assigned_to&.name || '—' %></td>
+      </tr>
+    </tbody>
+  </table>
+</div>

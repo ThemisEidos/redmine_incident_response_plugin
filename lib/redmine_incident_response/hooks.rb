@@ -2,17 +2,15 @@ module RedmineIncidentResponse
   class Hooks < Redmine::Hook::ViewListener
     def view_issues_show_details_bottom(context = {})
       issue = context[:issue]
-      Redmine.logger.debug(IssueHelper.panel_debug_message(issue)) if defined?(Redmine) && Redmine.respond_to?(:logger)
-
-      return '' unless IssueHelper.panel_visible?(issue)
+      return '' unless issue.present?
 
       controller = context[:controller]
       return '' unless controller
 
       controller.send(
         :render_to_string,
-        partial: IssueHelper.panel_partial,
-        locals: IssueHelper.panel_locals(issue)
+        partial: 'hooks/redmine_incident_response/issue_ir_panel',
+        locals: { issue: issue }
       )
     end
 

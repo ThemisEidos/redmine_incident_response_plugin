@@ -27,6 +27,11 @@ Redmine::Plugin.register :redmine_incident_response do
        :incident_response,
        { controller: 'incident_response', action: 'index' },
        caption: 'Incident Response'
+
+  project_module :incident_response do
+    permission :view_incident_response,   { incident_response: [:index] }, read: true
+    permission :manage_incident_response, { incident_response: [:index] }
+  end
 end
 
 Rails.application.config.to_prepare do

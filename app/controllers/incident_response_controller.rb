@@ -4,6 +4,28 @@ class IncidentResponseController < ApplicationController
   before_action :find_ir_issue, only: [:quick_action]
 
   def index
+    open_status_ids = IssueStatus.where(is_closed: false).select(:id)
+
+    @active_incidents = Issue.visible
+                             .joins(:tracker, :status)
+                             .where(trackers: { name: 'Incident' })
+                             .where(status_id: open_status_ids)
+                             .preload(:status, :priority, :assigned_to, :project)
+                             .order(updated_on: :desc)
+                             .limit(50)
+
+    @open_ioc_count = Issue.visible
+                           .joins(:tracker, :status)
+                           .where(trackers: { name: 'IOC' })
+                           .where(status_id: open_status_ids)
+                           .count
+
+    @recent_command_updates = Issue.visible
+                                   .joins(:tracker)
+                                   .where(trackers: { name: 'Command Update' })
+                                   .preload(:status, :project)
+                                   .order(updated_on: :desc)
+                                   .limit(10)
   end
 
   def quick_action
