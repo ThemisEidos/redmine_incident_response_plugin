@@ -114,12 +114,24 @@ module RedmineIncidentResponse
 
       def quick_actions_for(detection_type:, lifecycle_state:, escalation_eligibility:)
         actions = []
-        actions << 'Promote NAR → IOC' if normalization_match?(detection_type, RedmineIncidentResponse::Vernacular::NAR)
-        actions << 'Submit IOC for Validation' if normalization_match?(detection_type, RedmineIncidentResponse::Vernacular::IOC) && lifecycle_state != RedmineIncidentResponse::Vernacular::VALIDATED_IOC
-        actions << 'Validate IOC' if normalization_match?(lifecycle_state, RedmineIncidentResponse::Vernacular::IOC) || lifecycle_state == 'Pending Validation'
-        actions << 'Escalate to Crew Lead' if lifecycle_state == RedmineIncidentResponse::Vernacular::VALIDATED_IOC && escalation_eligibility == 'Eligible'
-        actions << 'Convert OBSERVABLE → IOC' if normalization_match?(detection_type, RedmineIncidentResponse::Vernacular::OBSERVABLE)
-        actions << 'Convert to RFI' if normalization_match?(detection_type, RedmineIncidentResponse::Vernacular::RFI)
+        if normalization_match?(detection_type, RedmineIncidentResponse::Vernacular::NAR)
+          actions << { label: 'Promote NAR → IOC', key: 'promote_nar_to_ioc' }
+        end
+        if normalization_match?(detection_type, RedmineIncidentResponse::Vernacular::IOC) && lifecycle_state != RedmineIncidentResponse::Vernacular::VALIDATED_IOC
+          actions << { label: 'Submit IOC for Validation', key: 'submit_for_validation' }
+        end
+        if normalization_match?(lifecycle_state, RedmineIncidentResponse::Vernacular::IOC) || lifecycle_state == 'Pending Validation'
+          actions << { label: 'Validate IOC', key: nil }
+        end
+        if lifecycle_state == RedmineIncidentResponse::Vernacular::VALIDATED_IOC && escalation_eligibility == 'Eligible'
+          actions << { label: 'Escalate to Crew Lead', key: nil }
+        end
+        if normalization_match?(detection_type, RedmineIncidentResponse::Vernacular::OBSERVABLE)
+          actions << { label: 'Convert OBSERVABLE → IOC', key: 'convert_observable_to_ioc' }
+        end
+        if normalization_match?(detection_type, RedmineIncidentResponse::Vernacular::RFI)
+          actions << { label: 'Convert to RFI', key: 'convert_to_rfi' }
+        end
         actions
       end
 

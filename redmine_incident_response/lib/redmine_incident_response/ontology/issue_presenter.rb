@@ -36,7 +36,8 @@ module RedmineIncidentResponse
           issue: issue,
           ir_context: IncidentResponseContext.build(issue),
           ontology: panel_context(issue),
-          guard: TransitionGuard.evaluate(issue)
+          guard: TransitionGuard.evaluate(issue),
+          loe_context: Models::LOEContext.build(issue)
         }
       end
 

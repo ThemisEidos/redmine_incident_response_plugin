@@ -12,6 +12,7 @@ require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_respo
 require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/context')
 require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/issue_helper')
 require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/issue_patch')
+require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/quick_action_service')
 require_dependency File.join(File.dirname(__FILE__), 'lib/redmine_incident_response/hooks')
 
 Redmine::Plugin.register :redmine_incident_response do

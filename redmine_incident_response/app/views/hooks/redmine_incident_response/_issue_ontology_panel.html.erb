@@ -2,6 +2,7 @@
 <% ir_context = local_assigns.fetch(:ir_context, RedmineIncidentResponse::IncidentResponseContext.build(issue)) %>
 <% ontology = local_assigns.fetch(:ontology, RedmineIncidentResponse::Ontology::IssueOntologyPresenter.panel_context(issue)) %>
 <% guard = local_assigns.fetch(:guard, RedmineIncidentResponse::Ontology::TransitionGuard.evaluate(issue)) %>
+<% loe_context = local_assigns.fetch(:loe_context, RedmineIncidentResponse::Models::LOEContext.build(issue)) %>
 
 <% if issue.present? %>
 <div class="box incident-response-panel ir-ontology-panel">
@@ -32,17 +33,25 @@
       <li><strong>Incident ID:</strong> <%= RedmineIncidentResponse::Ontology::IssueOntologyPresenter.display_text(ir_context.incident_id) %></li>
       <li><strong>Severity:</strong> <%= RedmineIncidentResponse::Ontology::IssueOntologyPresenter.display_text(ir_context.severity) %></li>
       <li><strong>IR Status:</strong> <%= RedmineIncidentResponse::Ontology::IssueOntologyPresenter.display_text(ir_context.ir_status) %></li>
+      <li><strong>LOE:</strong> <%= loe_context.grouped? ? loe_context.label : 'Not assigned' %></li>
     </ul>
   </div>
 
   <div class="ir-ontology-panel__section">
     <strong>Quick Actions</strong>
     <% if ontology.quick_actions.present? %>
-      <ul>
+      <div class="ir-quick-actions">
         <% ontology.quick_actions.each do |action| %>
-          <li><%= action %></li>
+          <% if action[:key] %>
+            <%= form_tag(ir_quick_action_path(issue_id: issue.id), method: :post, style: 'display:inline; margin-right:4px') do %>
+              <%= hidden_field_tag :action_key, action[:key] %>
+              <%= submit_tag action[:label], class: 'button-small' %>
+            <% end %>
+          <% else %>
+            <span class="ir-action-manual" title="Requires manual edit"><%= action[:label] %></span>
+          <% end %>
         <% end %>
-      </ul>
+      </div>
     <% else %>
       <div>None available</div>
     <% end %>
