@@ -2,7 +2,7 @@ require 'json'
 
 module RedmineIncidentResponse
   module Models
-    class IOC
+    class Ioc
       TYPES = %w[host network file domain ip].freeze
       CONFIDENCE_LEVELS = %w[low medium high].freeze
 

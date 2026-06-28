@@ -7,11 +7,11 @@ module RedmineIncidentResponse
     end
 
     def panel_locals(issue)
-      Ontology::IssueOntologyPresenter.panel_locals(issue)
+      Ontology::IssuePresenter.panel_locals(issue)
     end
 
     def panel_partial
-      Ontology::IssueOntologyPresenter.panel_partial
+      Ontology::IssuePresenter.panel_partial
     end
 
     def panel_debug_message(issue)

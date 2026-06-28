@@ -1,38 +1,38 @@
 <% issue = local_assigns.fetch(:issue, nil) %>
-<% ir_context = local_assigns.fetch(:ir_context, RedmineIncidentResponse::IncidentResponseContext.build(issue)) %>
-<% ontology = local_assigns.fetch(:ontology, RedmineIncidentResponse::Ontology::IssueOntologyPresenter.panel_context(issue)) %>
+<% ir_context = local_assigns.fetch(:ir_context, RedmineIncidentResponse::Context.build(issue)) %>
+<% ontology = local_assigns.fetch(:ontology, RedmineIncidentResponse::Ontology::IssuePresenter.panel_context(issue)) %>
 <% guard = local_assigns.fetch(:guard, RedmineIncidentResponse::Ontology::TransitionGuard.evaluate(issue)) %>
-<% loe_context = local_assigns.fetch(:loe_context, RedmineIncidentResponse::Models::LOEContext.build(issue)) %>
+<% loe_context = local_assigns.fetch(:loe_context, RedmineIncidentResponse::Models::LoeContext.build(issue)) %>
 
 <% if issue.present? %>
 <div class="box incident-response-panel ir-ontology-panel">
   <h3>Incident Response Ontology Panel</h3>
   <ul>
-    <li><strong>Detection Type:</strong> <span class="ir-badge ir-badge--detection-type"><%= RedmineIncidentResponse::Ontology::IssueOntologyPresenter.display_text(ontology.detection_type) %></span></li>
-    <li><strong>Lifecycle State:</strong> <span class="ir-badge ir-badge--lifecycle-state"><%= RedmineIncidentResponse::Ontology::IssueOntologyPresenter.display_text(ontology.lifecycle_state) %></span></li>
-    <li><strong>Analyst Lane:</strong> <span class="ir-badge ir-badge--analyst-lane"><%= RedmineIncidentResponse::Ontology::IssueOntologyPresenter.display_text(ontology.analyst_lane) %></span></li>
-    <li><strong>Escalation Eligibility:</strong> <span class="ir-badge ir-badge--escalation-eligibility"><%= RedmineIncidentResponse::Ontology::IssueOntologyPresenter.display_text(ontology.escalation_eligibility) %></span></li>
-    <li><strong>Validation Disposition:</strong> <span class="ir-badge ir-badge--validation-disposition"><%= RedmineIncidentResponse::Ontology::IssueOntologyPresenter.display_text(ontology.validation_disposition) %></span></li>
-    <li><strong>Operational Impact:</strong> <span class="ir-badge ir-badge--operational-impact"><%= RedmineIncidentResponse::Ontology::IssueOntologyPresenter.display_text(ontology.operational_impact) %></span></li>
-    <li><strong>Blast Radius:</strong> <span class="ir-badge ir-badge--blast-radius"><%= RedmineIncidentResponse::Ontology::IssueOntologyPresenter.display_text(ontology.blast_radius) %></span></li>
-    <li><strong>Evidence Reference:</strong> <%= RedmineIncidentResponse::Ontology::IssueOntologyPresenter.display_text(ontology.evidence_reference) %></li>
-    <li><strong>MITRE ATT&CK Tactic:</strong> <%= RedmineIncidentResponse::Ontology::IssueOntologyPresenter.display_text(ontology.mitre_tactic) %></li>
-    <li><strong>MITRE ATT&CK Technique:</strong> <%= RedmineIncidentResponse::Ontology::IssueOntologyPresenter.display_text(ontology.mitre_technique) %></li>
-    <li><strong>Threat Actor Tags:</strong> <%= RedmineIncidentResponse::Ontology::IssueOntologyPresenter.display_text(ontology.threat_actor_tags) %></li>
-    <li><strong>Cross-Incident Correlation ID:</strong> <%= RedmineIncidentResponse::Ontology::IssueOntologyPresenter.display_text(ontology.cross_incident_correlation_id) %></li>
-    <li><strong>Validation Rationale:</strong> <%= RedmineIncidentResponse::Ontology::IssueOntologyPresenter.display_text(ontology.validation_rationale) %></li>
-    <li><strong>Directed Actions:</strong> <%= RedmineIncidentResponse::Ontology::IssueOntologyPresenter.display_text(ontology.directed_actions) %></li>
-    <li><strong>Reviewer / Validator:</strong> <%= RedmineIncidentResponse::Ontology::IssueOntologyPresenter.display_text(ontology.validator_identity) %></li>
-    <li><strong>Target Assets:</strong> <%= RedmineIncidentResponse::Ontology::IssueOntologyPresenter.display_text(ontology.target_assets) %></li>
-    <li><strong>TTP Tags:</strong> <%= RedmineIncidentResponse::Ontology::IssueOntologyPresenter.display_text(ontology.ttp_tags) %></li>
+    <li><strong>Detection Type:</strong> <span class="ir-badge ir-badge--detection-type"><%= RedmineIncidentResponse::Ontology::IssuePresenter.display_text(ontology.detection_type) %></span></li>
+    <li><strong>Lifecycle State:</strong> <span class="ir-badge ir-badge--lifecycle-state"><%= RedmineIncidentResponse::Ontology::IssuePresenter.display_text(ontology.lifecycle_state) %></span></li>
+    <li><strong>Analyst Lane:</strong> <span class="ir-badge ir-badge--analyst-lane"><%= RedmineIncidentResponse::Ontology::IssuePresenter.display_text(ontology.analyst_lane) %></span></li>
+    <li><strong>Escalation Eligibility:</strong> <span class="ir-badge ir-badge--escalation-eligibility"><%= RedmineIncidentResponse::Ontology::IssuePresenter.display_text(ontology.escalation_eligibility) %></span></li>
+    <li><strong>Validation Disposition:</strong> <span class="ir-badge ir-badge--validation-disposition"><%= RedmineIncidentResponse::Ontology::IssuePresenter.display_text(ontology.validation_disposition) %></span></li>
+    <li><strong>Operational Impact:</strong> <span class="ir-badge ir-badge--operational-impact"><%= RedmineIncidentResponse::Ontology::IssuePresenter.display_text(ontology.operational_impact) %></span></li>
+    <li><strong>Blast Radius:</strong> <span class="ir-badge ir-badge--blast-radius"><%= RedmineIncidentResponse::Ontology::IssuePresenter.display_text(ontology.blast_radius) %></span></li>
+    <li><strong>Evidence Reference:</strong> <%= RedmineIncidentResponse::Ontology::IssuePresenter.display_text(ontology.evidence_reference) %></li>
+    <li><strong>MITRE ATT&CK Tactic:</strong> <%= RedmineIncidentResponse::Ontology::IssuePresenter.display_text(ontology.mitre_tactic) %></li>
+    <li><strong>MITRE ATT&CK Technique:</strong> <%= RedmineIncidentResponse::Ontology::IssuePresenter.display_text(ontology.mitre_technique) %></li>
+    <li><strong>Threat Actor Tags:</strong> <%= RedmineIncidentResponse::Ontology::IssuePresenter.display_text(ontology.threat_actor_tags) %></li>
+    <li><strong>Cross-Incident Correlation ID:</strong> <%= RedmineIncidentResponse::Ontology::IssuePresenter.display_text(ontology.cross_incident_correlation_id) %></li>
+    <li><strong>Validation Rationale:</strong> <%= RedmineIncidentResponse::Ontology::IssuePresenter.display_text(ontology.validation_rationale) %></li>
+    <li><strong>Directed Actions:</strong> <%= RedmineIncidentResponse::Ontology::IssuePresenter.display_text(ontology.directed_actions) %></li>
+    <li><strong>Reviewer / Validator:</strong> <%= RedmineIncidentResponse::Ontology::IssuePresenter.display_text(ontology.validator_identity) %></li>
+    <li><strong>Target Assets:</strong> <%= RedmineIncidentResponse::Ontology::IssuePresenter.display_text(ontology.target_assets) %></li>
+    <li><strong>TTP Tags:</strong> <%= RedmineIncidentResponse::Ontology::IssuePresenter.display_text(ontology.ttp_tags) %></li>
   </ul>
 
   <div class="ir-ontology-panel__section">
     <strong>Incident Context</strong>
     <ul>
-      <li><strong>Incident ID:</strong> <%= RedmineIncidentResponse::Ontology::IssueOntologyPresenter.display_text(ir_context.incident_id) %></li>
-      <li><strong>Severity:</strong> <%= RedmineIncidentResponse::Ontology::IssueOntologyPresenter.display_text(ir_context.severity) %></li>
-      <li><strong>IR Status:</strong> <%= RedmineIncidentResponse::Ontology::IssueOntologyPresenter.display_text(ir_context.ir_status) %></li>
+      <li><strong>Incident ID:</strong> <%= RedmineIncidentResponse::Ontology::IssuePresenter.display_text(ir_context.incident_id) %></li>
+      <li><strong>Severity:</strong> <%= RedmineIncidentResponse::Ontology::IssuePresenter.display_text(ir_context.severity) %></li>
+      <li><strong>IR Status:</strong> <%= RedmineIncidentResponse::Ontology::IssuePresenter.display_text(ir_context.ir_status) %></li>
       <li><strong>LOE:</strong> <%= loe_context.grouped? ? loe_context.label : 'Not assigned' %></li>
     </ul>
   </div>

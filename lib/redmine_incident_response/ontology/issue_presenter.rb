@@ -1,6 +1,6 @@
 module RedmineIncidentResponse
   module Ontology
-    module IssueOntologyPresenter
+    module IssuePresenter
       module_function
 
       def panel_context(issue)
@@ -34,10 +34,10 @@ module RedmineIncidentResponse
       def panel_locals(issue)
         {
           issue: issue,
-          ir_context: IncidentResponseContext.build(issue),
+          ir_context: Context.build(issue),
           ontology: panel_context(issue),
           guard: TransitionGuard.evaluate(issue),
-          loe_context: Models::LOEContext.build(issue)
+          loe_context: Models::LoeContext.build(issue)
         }
       end
 

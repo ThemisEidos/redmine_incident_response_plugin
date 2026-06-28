@@ -1,6 +1,6 @@
 module RedmineIncidentResponse
   module Models
-    class LOEContext
+    class LoeContext
       DEFAULT_FIELD_NAME = 'LOE'.freeze
       PREFIX_PATTERN = /\A\[(?<loe>[^\]]+)\]\s*/.freeze
 

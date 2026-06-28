@@ -1,5 +1,5 @@
 module RedmineIncidentResponse
-  module IncidentResponseContext
+  module Context
     ANALYST_LANES = ['CTI', 'Host', 'Network', 'Forensics'].freeze
     DEFAULT_SEVERITY = 'MEDIUM'
     DEFAULT_STATUS = 'New'
@@ -8,7 +8,7 @@ module RedmineIncidentResponse
       issue_id = issue&.id
       incident_id = issue_id ? "ISSUE-#{issue_id}" : nil
 
-      Models::IncidentContext.new(
+      Models::IrContext.new(
         incident_id: incident_id,
         severity: severity_for(issue),
         analyst_lane: analyst_lane_for(issue),

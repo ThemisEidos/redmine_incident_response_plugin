@@ -15,7 +15,7 @@ module RedmineIncidentResponse
       module_function
 
       def classify(issue)
-        incident_context = IncidentResponseContext.build(issue)
+        incident_context = Context.build(issue)
         detection_type = detection_type_for(issue)
         lifecycle_state = lifecycle_state_for(issue)
         analyst_lane = analyst_lane_for(issue)
@@ -91,7 +91,7 @@ module RedmineIncidentResponse
 
       def analyst_lane_for(issue)
         custom_field_value(issue, 'Analyst Lane').presence ||
-          IncidentResponseContext.build(issue).analyst_lane
+          Context.build(issue).analyst_lane
       end
 
       def escalation_eligibility_for(issue, detection_type:, lifecycle_state:, validation_disposition:, validation_rationale:, validator_identity:)
@@ -183,7 +183,7 @@ module RedmineIncidentResponse
         when 'OPERATIONAL OBJECTIVE'
           'Operational Objective Active'
         else
-          IRStatusMap.lifecycle_for(status_name(issue), IRStatusMap::DEFAULT_MAP) || 'Not set'
+          Models::IrStatusMap.lifecycle_for(status_name(issue), Models::IrStatusMap::DEFAULT_MAP) || 'Not set'
         end
       end
       private_class_method :default_lifecycle_state_for
