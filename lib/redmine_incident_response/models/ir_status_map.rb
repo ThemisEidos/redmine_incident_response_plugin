@@ -4,6 +4,9 @@ module RedmineIncidentResponse
       DEFAULT_MAP = {
         'New' => 'Triage',
         'In Progress' => 'Analysis',
+        'Pending Validation' => 'Pending Validation',
+        'Validated IOC' => 'Validated IOC',
+        'Escalated' => 'Escalated',
         'Resolved' => 'Recovery',
         'Closed' => 'Closed'
       }.freeze

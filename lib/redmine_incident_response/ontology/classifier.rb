@@ -124,7 +124,7 @@ module RedmineIncidentResponse
 
         if FieldLookup.match?(lifecycle_state, RedmineIncidentResponse::Vernacular::VALIDATED_IOC) &&
            escalation_eligibility == 'Eligible'
-          actions << { label: 'Escalate to Crew Lead', key: nil }
+          actions << { label: 'Escalate', key: 'escalate' }
         end
 
         actions

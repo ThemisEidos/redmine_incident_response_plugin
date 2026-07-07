@@ -8,10 +8,12 @@ module RedmineIncidentResponse
       case action_key
       when 'promote_nar_to_ioc', 'convert_observable_to_ioc'
         change_tracker(issue, Vernacular::IOC)
-      when 'submit_for_validation'
-        set_custom_field(issue, 'Lifecycle State', 'Pending Validation')
       when 'convert_to_rfi'
         change_tracker(issue, Vernacular::RFI)
+      when 'submit_for_validation'
+        set_custom_field(issue, 'Lifecycle State', 'Pending Validation')
+      when 'escalate'
+        escalate(issue, user)
       else
         { success: false, message: "Unknown quick action: #{action_key}" }
       end
@@ -42,5 +44,28 @@ module RedmineIncidentResponse
       end
     end
     private_class_method :set_custom_field
+
+    def escalate(issue, user)
+      role_name = escalation_role_for(issue, user)
+      chain = Models::ValidationChain.escalate(issue, role_name)
+      unless chain[:escalatable]
+        return { success: false, message: "No escalation step above #{role_name}." }
+      end
+
+      result = set_custom_field(issue, 'Lifecycle State', 'Escalated')
+      return result unless result[:success]
+
+      { success: true, message: "Escalated from #{role_name} toward #{chain[:next_role]}." }
+    end
+    private_class_method :escalate
+
+    def escalation_role_for(issue, user)
+      return Models::ValidationChain::ROLES.first unless user.respond_to?(:roles_for_project)
+
+      names = user.roles_for_project(issue.project).map(&:name)
+      Models::ValidationChain::ROLES.reverse.find { |role| names.include?(role) } ||
+        Models::ValidationChain::ROLES.first
+    end
+    private_class_method :escalation_role_for
   end
 end
