@@ -1,6 +1,6 @@
 class IncidentResponseController < ApplicationController
   before_action :require_login
-  before_action :require_admin, only: [:index]
+  before_action :authorize_dashboard, only: [:index]
   before_action :find_ir_issue, only: [:quick_action]
 
   def index
@@ -63,6 +63,13 @@ class IncidentResponseController < ApplicationController
   end
 
   private
+
+  def authorize_dashboard
+    return if User.current.admin?
+    return if User.current.allowed_to?(:view_incident_response, nil, global: true)
+
+    deny_access
+  end
 
   def find_ir_issue
     @issue = Issue.find(params[:issue_id])
