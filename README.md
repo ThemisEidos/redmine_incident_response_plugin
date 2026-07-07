@@ -4,6 +4,14 @@ This plugin uses Redmine issues as the primary incident container and adds a sem
 It standardizes the local vocabulary around NAR, IOC, Validated IOC, Observable, Evidence Reference, SITREP, RFI, AAR, LOE, and ME.
 `AAR` means `After Action Review`.
 
+## Current Plan (2026-07-07)
+
+A security/functionality/efficiency audit was completed on 2026-07-07. Remediation and
+Phase 4 completion work is specified task-by-task in
+[`docs/superpowers/plans/2026-07-07-audit-remediation-and-completion.md`](docs/superpowers/plans/2026-07-07-audit-remediation-and-completion.md).
+Known issue until that plan's Task 5 lands: the ontology panel described below (and its
+quick-action buttons) is **not yet rendered** on the issue page — only the basic IR panel is.
+
 ## Core ontology labels
 
 - `NAR`
