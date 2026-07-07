@@ -8,7 +8,7 @@
     <p style="font-size: 2em; font-weight: bold; margin: 8px 0;">
       <%= @open_ioc_count %>
     </p>
-    <p><%= link_to 'View all IOCs', issues_path(tracker_id: Tracker.find_by(name: 'IOC')&.id) %></p>
+    <p><%= link_to 'View all IOCs', issues_path(tracker_id: @ioc_tracker&.id) %></p>
   </div>
 
   <%# ── Recent Command Updates ──────────────────────────────── %>
@@ -48,7 +48,7 @@
 
   <%# ── Active Incidents ────────────────────────────────────── %>
   <div class="box">
-    <h3>Active Incidents (<%= @active_incidents.size %>)</h3>
+    <h3>Active Incidents (<%= @active_incident_count %>)</h3>
     <% if @active_incidents.any? %>
       <table class="list issues" style="width:100%">
         <thead>

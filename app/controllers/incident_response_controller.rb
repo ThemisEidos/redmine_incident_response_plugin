@@ -5,18 +5,22 @@ class IncidentResponseController < ApplicationController
 
   def index
     open_status_ids = IssueStatus.where(is_closed: false).select(:id)
+    @ioc_tracker = Tracker.find_by(name: RedmineIncidentResponse::Vernacular::IOC)
 
-    @active_incidents = Issue.visible
-                             .joins(:tracker, :status)
-                             .where(trackers: { name: 'Incident' })
-                             .where(status_id: open_status_ids)
-                             .preload(:status, :priority, :assigned_to, :project)
-                             .order(updated_on: :desc)
-                             .limit(50)
+    active_incident_scope = Issue.visible
+                                 .joins(:tracker)
+                                 .where(trackers: { name: 'Incident' })
+                                 .where(status_id: open_status_ids)
+
+    @active_incident_count = active_incident_scope.count
+    @active_incidents = active_incident_scope
+                          .preload(:status, :priority, :assigned_to, :project)
+                          .order(updated_on: :desc)
+                          .limit(50)
 
     @open_ioc_count = Issue.visible
-                           .joins(:tracker, :status)
-                           .where(trackers: { name: 'IOC' })
+                           .joins(:tracker)
+                           .where(trackers: { name: RedmineIncidentResponse::Vernacular::IOC })
                            .where(status_id: open_status_ids)
                            .count
 
