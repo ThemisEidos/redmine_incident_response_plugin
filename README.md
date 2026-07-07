@@ -9,8 +9,6 @@ It standardizes the local vocabulary around NAR, IOC, Validated IOC, Observable,
 A security/functionality/efficiency audit was completed on 2026-07-07. Remediation and
 Phase 4 completion work is specified task-by-task in
 [`docs/superpowers/plans/2026-07-07-audit-remediation-and-completion.md`](docs/superpowers/plans/2026-07-07-audit-remediation-and-completion.md).
-Known issue until that plan's Task 5 lands: the ontology panel described below (and its
-quick-action buttons) is **not yet rendered** on the issue page — only the basic IR panel is.
 
 ## Core ontology labels
 
@@ -28,6 +26,7 @@ quick-action buttons) is **not yet rendered** on the issue page — only the bas
 ## Issue page panel
 
 The issue show page renders an ontology panel through the `view_issues_show_details_bottom` hook.
+Quick actions (Promote NAR → IOC, Convert OBSERVABLE → IOC/RFI, Convert NAR → RFI, Submit IOC for Validation, Escalate) render as buttons in the panel and POST to the plugin's quick_action endpoint. They require the project's Incident Response module to be enabled and the manage_incident_response permission.
 
 The panel displays:
 
@@ -64,52 +63,21 @@ The panel displays:
 - Ontology data is derived from issue fields, custom fields, tracker names, and safe defaults
 - Raw evidence stays out of Redmine; only evidence references should be stored in fields or notes
 
-## Verification Status
+## Setup
 
-### Static checks performed
+1. Install the plugin into `plugins/redmine_incident_response` and restart Redmine.
+2. Run `bundle exec rake ir:setup RAILS_ENV=production` from the Redmine root — creates IR statuses, trackers, roles, and all required custom fields (idempotent).
+3. Enable the **Incident Response** module on each IR project (Project → Settings → Modules).
+4. Grant `view_incident_response` / `manage_incident_response` to the appropriate roles.
+5. Optional: seed the training lab with `Initialize-RedmineCyberIRLab.ps1` (set `REDMINE_API_KEY` first).
 
-- Inspected `init.rb` load order and dependency paths
-- Inspected hook registration and partial path wiring
-- Inspected ontology classifier, transition guard, and issue presenter
-- Verified the ontology panel partial delegates through the compatibility wrapper
-- Checked for recursive save calls in the plugin Ruby files
+Ops note: the current deployment target (`/root/redmine-6.1`) should migrate to an
+unprivileged service account (e.g. `/opt/redmine`, user `redmine`).
 
-### Ruby syntax check
+## Testing
 
-- Not completed locally because `ruby` is not available on this machine PATH
+Standalone logic tests (no Redmine needed): `gem install activesupport minitest`, then
+`for f in test/standalone/*_test.rb; do ruby "$f" || exit 1; done` from the plugin root.
 
-### Live Redmine runtime check
-
-- Not completed in this environment
-
-### Known limitations
-
-- Controller hook behavior has not been verified against a live Redmine 6.1.2 instance
-- The plugin assumes the expected custom fields exist when available, but degrades to `Not set` when they do not
-- No persistence layer is added for ontology data
-
-### Required custom field names
-
-- `Detection Type`
-- `Lifecycle State`
-- `Analyst Lane`
-- `Validation Disposition`
-- `Validation Rationale`
-- `Reviewer / Validator`
-- `Operational Impact`
-- `Blast Radius`
-- `Evidence Reference`
-- `MITRE ATT&CK Tactic`
-- `MITRE ATT&CK Technique`
-- `TTP Tags`
-- `Cross-Incident Correlation ID`
-- `Threat Actor Tags`
-- `Directed Actions`
-- `Target Assets`
-
-### Recommended next live validation steps
-
-1. Open an issue show page in Redmine 6.1.2 and confirm the Incident Response Ontology Panel renders.
-2. Create issues with missing custom fields and confirm the panel renders `Not set` safely.
-3. Validate the `view_issues_show_details_bottom` hook path on a live Redmine instance.
-4. Test NAR, IOC, OBSERVABLE, RFI, and VALIDATED IOC issue classifications manually.
+Live verification checklist: see Task 15 in
+`docs/superpowers/plans/2026-07-07-audit-remediation-and-completion.md`.
