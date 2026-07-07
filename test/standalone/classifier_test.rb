@@ -63,6 +63,20 @@ class ClassifierTest < Minitest::Test
     assert_equal 'Not Eligible', C.classify(issue).escalation_eligibility
   end
 
+  def test_validated_ioc_eligible_for_escalation_offers_escalate_key
+    issue = StubIssue.new(
+      tracker: StubTracker.new('VALIDATED IOC'),
+      fields: {
+        'Validation Disposition' => 'VERIFIED',
+        'Validation Rationale'   => 'Confirmed via EDR telemetry',
+        'Reviewer / Validator'   => 'crew.lead'
+      }
+    )
+    assert_equal 'Eligible', C.classify(issue).escalation_eligibility
+    assert_equal RedmineIncidentResponse::Vernacular::VALIDATED_IOC, C.classify(issue).lifecycle_state
+    assert_includes keys_for(issue), 'escalate'
+  end
+
   def test_unset_analyst_lane_is_nil_not_fabricated
     # F6: the old code assigned a lane from issue.id % 4.
     issue = StubIssue.new(id: 7, tracker: StubTracker.new('IOC'))

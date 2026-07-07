@@ -11,11 +11,17 @@ module RedmineIncidentResponse
         locals: { issue: issue }
       )
 
-      ontology_panel = controller.send(
-        :render_to_string,
-        partial: RedmineIncidentResponse::IssueHelper.panel_partial,
-        locals: RedmineIncidentResponse::IssueHelper.panel_locals(issue)
-      )
+      ontology_panel =
+        begin
+          controller.send(
+            :render_to_string,
+            partial: RedmineIncidentResponse::IssueHelper.panel_partial,
+            locals: RedmineIncidentResponse::IssueHelper.panel_locals(issue)
+          )
+        rescue StandardError => e
+          log_ontology_render_error(issue, e)
+          ''
+        end
 
       ir_panel + ontology_panel
     end
@@ -34,6 +40,12 @@ module RedmineIncidentResponse
       return unless issue && defined?(Redmine) && Redmine.respond_to?(:logger)
 
       Redmine.logger.debug("IR Hook: issue #{issue.id} #{action} save completed (ontology: #{issue.tracker&.name})")
+    end
+
+    def log_ontology_render_error(issue, error)
+      return unless defined?(Redmine) && Redmine.respond_to?(:logger)
+
+      Redmine.logger.error("IR Hook: ontology panel render failed for issue #{issue&.id}: #{error.class}: #{error.message}")
     end
   end
 end
