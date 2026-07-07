@@ -36,7 +36,15 @@ namespace :ir do
     # -----------------------------------------------------------------------
     tracker_names = [
       'Incident',
+      'NAR',
       'IOC',
+      'VALIDATED IOC',
+      'OBSERVABLE',
+      'RFI',
+      'SITREP',
+      'AAR',
+      'LOE',
+      'ME',
       'Evidence Item',
       'Command Update',
       'Analysis Task'
@@ -62,6 +70,62 @@ namespace :ir do
             puts "  [ERROR]   #{name}: #{tracker.errors.full_messages.join(', ')}"
           end
         end
+      end
+    end
+
+    # -----------------------------------------------------------------------
+    # Custom Fields (README "Required custom field names")
+    # -----------------------------------------------------------------------
+    field_definitions = [
+      { name: 'Detection Type', format: 'list',
+        possible_values: ['NAR', 'IOC', 'VALIDATED IOC', 'OBSERVABLE', 'RFI', 'LOE', 'ME', 'Operational Objective'] },
+      { name: 'Lifecycle State', format: 'list',
+        possible_values: ['NAR', 'IOC', 'Pending Validation', 'VALIDATED IOC', 'Under Investigation',
+                          'RFI Open', 'LOE Active', 'ME Active', 'Operational Objective Active', 'Escalated', 'Closed'] },
+      { name: 'Analyst Lane', format: 'list',
+        possible_values: ['CTI', 'Host', 'Network', 'Forensics'] },
+      { name: 'Validation Disposition', format: 'list',
+        possible_values: ['VERIFIED', 'FALSE POSITIVE', 'UNDER INVESTIGATION'] },
+      { name: 'IR Severity', format: 'list',
+        possible_values: ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'] },
+      { name: 'IR Status', format: 'list',
+        possible_values: ['New', 'Triage', 'Analysis', 'Containment', 'Recovery', 'Closed'] },
+      { name: 'Validation Rationale',           format: 'text'   },
+      { name: 'Directed Actions',               format: 'text'   },
+      { name: 'Target Assets',                  format: 'text'   },
+      { name: 'Evidence Reference',             format: 'text'   },
+      { name: 'Reviewer / Validator',           format: 'string' },
+      { name: 'MITRE ATT&CK Tactic',            format: 'string' },
+      { name: 'MITRE ATT&CK Technique',         format: 'string' },
+      { name: 'TTP Tags',                       format: 'string' },
+      { name: 'Cross-Incident Correlation ID',  format: 'string' },
+      { name: 'Threat Actor Tags',              format: 'string' },
+      { name: 'Blast Radius',                   format: 'string' },
+      { name: 'Operational Impact',             format: 'string' },
+      { name: 'LOE',                            format: 'string' }
+    ]
+
+    puts "\n-- Custom Fields --"
+    ir_trackers = Tracker.where(name: tracker_names)
+    field_definitions.each do |defn|
+      if IssueCustomField.exists?(name: defn[:name])
+        puts "  [skip]    #{defn[:name]}"
+        next
+      end
+
+      field = IssueCustomField.new(
+        name: defn[:name],
+        field_format: defn[:format],
+        is_for_all: true,
+        is_filter: true
+      )
+      field.possible_values = defn[:possible_values] if defn[:possible_values]
+      field.trackers = ir_trackers
+
+      if field.save
+        puts "  [created] #{defn[:name]}"
+      else
+        puts "  [ERROR]   #{defn[:name]}: #{field.errors.full_messages.join(', ')}"
       end
     end
 
