@@ -1,6 +1,7 @@
 require_relative 'lib/redmine_incident_response'
 require_relative 'lib/redmine_incident_response/ontology'
 require_relative 'lib/redmine_incident_response/vernacular'
+require_relative 'lib/redmine_incident_response/field_lookup'
 require_relative 'lib/redmine_incident_response/models/ir_context'
 require_relative 'lib/redmine_incident_response/models/loe_context'
 require_relative 'lib/redmine_incident_response/models/ioc'
