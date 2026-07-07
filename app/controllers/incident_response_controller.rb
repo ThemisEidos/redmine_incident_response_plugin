@@ -29,14 +29,25 @@ class IncidentResponseController < ApplicationController
   end
 
   def quick_action
-    unless User.current.allowed_to?(:edit_issues, @issue.project)
+    unless User.current.allowed_to?(:edit_issues, @issue.project) &&
+           User.current.allowed_to?(:manage_incident_response, @issue.project)
       deny_access
       return
     end
 
-    result = RedmineIncidentResponse::QuickActionService.perform(
-      @issue, params[:action_key].to_s, User.current
-    )
+    action_key = params[:action_key].to_s
+    offered_keys = RedmineIncidentResponse::Ontology::Classifier
+                     .classify(@issue)
+                     .quick_actions
+                     .filter_map { |action| action[:key] }
+
+    unless offered_keys.include?(action_key)
+      flash[:error] = "Quick action '#{action_key}' is not available for this issue."
+      redirect_to issue_path(@issue)
+      return
+    end
+
+    result = RedmineIncidentResponse::QuickActionService.perform(@issue, action_key, User.current)
 
     if result[:success]
       flash[:notice] = result[:message]
