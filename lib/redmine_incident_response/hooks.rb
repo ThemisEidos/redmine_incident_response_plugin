@@ -2,16 +2,22 @@ module RedmineIncidentResponse
   class Hooks < Redmine::Hook::ViewListener
     def view_issues_show_details_bottom(context = {})
       issue = context[:issue]
-      return '' unless issue.present?
-
       controller = context[:controller]
-      return '' unless controller
+      return '' unless issue.present? && controller
 
-      controller.send(
+      ir_panel = controller.send(
         :render_to_string,
         partial: 'hooks/redmine_incident_response/issue_ir_panel',
         locals: { issue: issue }
       )
+
+      ontology_panel = controller.send(
+        :render_to_string,
+        partial: RedmineIncidentResponse::IssueHelper.panel_partial,
+        locals: RedmineIncidentResponse::IssueHelper.panel_locals(issue)
+      )
+
+      ir_panel + ontology_panel
     end
 
     def controller_issues_new_after_save(context = {})
