@@ -4,20 +4,20 @@ module RedmineIncidentResponse
     DEFAULT_SEVERITY = 'MEDIUM'
     DEFAULT_STATUS = 'New'
 
-    def self.build(issue)
+    def self.build(issue, fields: nil)
+      fields ||= FieldLookup.custom_field_map(issue)
       issue_id = issue&.id
-      incident_id = issue_id ? "ISSUE-#{issue_id}" : nil
 
       Models::IrContext.new(
-        incident_id: incident_id,
-        severity: severity_for(issue),
-        analyst_lane: analyst_lane_for(issue),
-        ir_status: ir_status_for(issue)
+        incident_id: issue_id ? "ISSUE-#{issue_id}" : nil,
+        severity: severity_for(issue, fields),
+        analyst_lane: fields['Analyst Lane'].presence&.to_s,
+        ir_status: fields['IR Status'].presence&.to_s || DEFAULT_STATUS
       )
     end
 
-    def self.severity_for(issue)
-      value = custom_field_value(issue, 'IR Severity')
+    def self.severity_for(issue, fields)
+      value = fields['IR Severity']
       return normalize_severity(value) if value.present?
 
       priority_name = issue&.priority&.name
@@ -26,48 +26,13 @@ module RedmineIncidentResponse
       DEFAULT_SEVERITY
     end
 
-    def self.analyst_lane_for(issue)
-      value = custom_field_value(issue, 'Analyst Lane')
-      return value.to_s if value.present?
-
-      return ANALYST_LANES[(issue.id.to_i - 1) % ANALYST_LANES.length] if issue&.id.present?
-
-      ANALYST_LANES.first
-    end
-
-    def self.ir_status_for(issue)
-      value = custom_field_value(issue, 'IR Status')
-      return value.to_s if value.present?
-
-      DEFAULT_STATUS
-    end
-
-    def self.custom_field_value(issue, field_name)
-      return nil unless issue&.respond_to?(:custom_field_values)
-
-      custom_field = issue.custom_field_values.find do |field_value|
-        field_value.custom_field&.name == field_name
-      end
-
-      custom_field&.value
-    end
-    private_class_method :custom_field_value
-
     def self.normalize_severity(value)
-      normalized = value.to_s.strip.upcase
-      return DEFAULT_SEVERITY if normalized.blank?
-
-      case normalized
-      when 'LOW', 'L'
-        'LOW'
-      when 'MEDIUM', 'MED', 'M'
-        'MEDIUM'
-      when 'HIGH', 'H'
-        'HIGH'
-      when 'CRITICAL', 'CRIT'
-        'CRITICAL'
-      else
-        DEFAULT_SEVERITY
+      case value.to_s.strip.upcase
+      when 'LOW', 'L'                              then 'LOW'
+      when 'MEDIUM', 'MED', 'M', 'NORMAL'          then 'MEDIUM'
+      when 'HIGH', 'H'                             then 'HIGH'
+      when 'CRITICAL', 'CRIT', 'URGENT', 'IMMEDIATE' then 'CRITICAL'
+      else DEFAULT_SEVERITY
       end
     end
     private_class_method :normalize_severity

@@ -28,13 +28,7 @@ module RedmineIncidentResponse
       end
 
       def self.custom_field_loe(issue)
-        return nil unless issue.respond_to?(:custom_field_values)
-
-        field_value = issue.custom_field_values.find do |value|
-          value.custom_field&.name == DEFAULT_FIELD_NAME
-        end
-
-        field_value&.value.presence
+        FieldLookup.custom_field_value(issue, DEFAULT_FIELD_NAME).presence
       end
       private_class_method :custom_field_loe
 
