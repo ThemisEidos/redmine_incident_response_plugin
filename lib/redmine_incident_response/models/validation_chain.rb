@@ -1,7 +1,7 @@
 module RedmineIncidentResponse
   module Models
     class ValidationChain
-      ROLES = ['Analyst', 'Crew Lead', 'Team Lead', 'Commander'].freeze
+      ROLES = ['Operator', 'Crew Lead', 'Team Lead', 'Commander'].freeze
 
       def self.next_step(role)
         index = role_index(role)
